@@ -5,8 +5,9 @@ from PIL import Image
 db = firestore.Client.from_service_account_json("firestore-key.json")
 
 doc_ref = db.collection("attractions")
-
-
+doc_ref_preserves = db.collection("preserves")
+doc_ref_reserves = db.collection("reserves")
+doc_ref_rivers = db.collection("rivers")
 
 image = Image.open('assets/0.jpeg')
 st.set_page_config(page_title="Website", layout="wide")
@@ -60,6 +61,70 @@ with tab1:
                     st.caption(doc.get('longitude'))
                 with coll:
                     st.image("assets/" + str(doc.get("id")) + ".jpeg")
+                st.divider()
+
+
+    with PreservesTab:
+        for doc in doc_ref_preserves.stream():
+                st.subheader(doc.get("name"))
+                st.caption(doc.get("description",))
+                st.divider()
+                firstcol, secondcol = st.columns(2)
+                with secondcol:
+                    st.subheader("More information on" + " " + doc.get("name") + ":")
+                    st.write("State:")
+                    st.caption(doc.get("state"))
+                    st.write("")
+                    st.write("Website:")
+                    st.caption(doc.get("website"))
+                    st.write("")
+                    st.write("Coordinates (latitude, longitude):")
+                    st.caption(doc.get('latitude'))
+                    st.caption(doc.get('longitude'))
+                with firstcol:
+                    st.image("assets/" + str(doc.get("id")) + "preserves" + ".jpeg")
+                st.divider()
+
+    with RiversTab:
+        for doc in doc_ref_rivers.stream():
+                st.subheader(doc.get("name"))
+                st.caption(doc.get("description",))
+                st.divider()
+                firstcoll, secondcoll = st.columns(2)
+                with secondcoll:
+                    st.subheader("More information on" + " " + doc.get("name") + ":")
+                    st.write("State:")
+                    st.caption(doc.get("state"))
+                    st.write("")
+                    st.write("Website:")
+                    st.caption(doc.get("website"))
+                    st.write("")
+                    st.write("Coordinates (latitude, longitude):")
+                    st.caption(doc.get('latitude'))
+                    st.caption(doc.get('longitude'))
+                with firstcoll:
+                    st.image("assets/" + str(doc.get("id")) + "rivers" + ".jpeg")
+                st.divider()
+
+    with ReservesTab:
+        for doc in doc_ref_reserves.stream():
+                st.subheader(doc.get("name"))
+                st.caption(doc.get("description",))
+                st.divider()
+                firstcolll, secondcolll = st.columns(2)
+                with secondcolll:
+                    st.subheader("More information on" + " " + doc.get("name") + ":")
+                    st.write("State:")
+                    st.caption(doc.get("state"))
+                    st.write("")
+                    st.write("Website:")
+                    st.caption(doc.get("website"))
+                    st.write("")
+                    st.write("Coordinates (latitude, longitude):")
+                    st.caption(doc.get('latitude'))
+                    st.caption(doc.get('longitude'))
+                with firstcolll:
+                    st.image("assets/" + str(doc.get("id")) + "reserves" + ".jpeg")
                 st.divider()
 
 
