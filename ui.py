@@ -1,6 +1,8 @@
 import streamlit as st
 from google.cloud import firestore
 from PIL import Image
+from streamlit_folium import folium_static
+import folium
 
 db = firestore.Client.from_service_account_json("firestore-key.json")
 
@@ -8,20 +10,20 @@ doc_ref = db.collection("attractions")
 doc_ref_preserves = db.collection("preserves")
 doc_ref_reserves = db.collection("reserves")
 doc_ref_rivers = db.collection("rivers")
-
+doc_ref_seashores = db.collection("seashores")
 image = Image.open('assets/0.jpeg')
-st.set_page_config(page_title="Website", layout="wide")
+st.set_page_config(page_title="Website",
+                   layout="wide",
+                   )
 tab1, tab2, tab4 = st.tabs(["Dashboard ⛰", "Map📍", "Opportunities ❤️"])
 
 with tab1:
     st.title('A faster way to search for your next nature destination')
-
+    st.subheader("Welcome to Park Pilot!")
     st.write('Explore natures treasures effortlessly – find national forests, parks, seashores, and beyond ')
 
     st.divider()
-    st.text('''[Website name] is your directory to your next natural wonder. [Website name] is 
-    supposed to help motivate people get out into the great outdoors, 
-    and find a love for nature, and protecting it.''')
+    st.write('Park Pilot is your directory to your next natural wonder. Park Pilot is dedicated to help motivate people get out into the great outdoors, and find a love for nature, and protecting it.')
 
     col1, col2 = st.columns(2)
 
@@ -126,6 +128,37 @@ with tab1:
                 with firstcolll:
                     st.image("assets/" + str(doc.get("id")) + "reserves" + ".jpeg")
                 st.divider()
+
+    with SeashoresTab:
+        for doc in doc_ref_seashores.stream():
+                st.subheader(doc.get("name"))
+                st.caption(doc.get("description",))
+                st.divider()
+                firstcollll, secondcollll = st.columns(2)
+                with secondcollll:
+                    st.subheader("More information on" + " " + doc.get("name") + ":")
+                    st.write("State:")
+                    st.caption(doc.get("state"))
+                    st.write("")
+                    st.write("Website:")
+                    st.caption(doc.get("website"))
+                    st.write("")
+                    st.write("Coordinates (latitude, longitude):")
+                    st.caption(doc.get('latitude'))
+                    st.caption(doc.get('longitude'))
+                with firstcollll:
+                    st.image("assets/" + str(doc.get("id")) + "seashores" + ".jpeg")
+                st.divider()
+
+with tab2:
+    m = folium.Map(location=[39.8283, -98.5795], zoom_start=1)
+    for doc in doc_ref.stream():
+        folium.Marker(
+            [doc.get("latitude"), doc.get("longitude")], popup=doc.get("name")
+        ).add_to(m)
+
+    folium_static(m)
+
 
 
 
